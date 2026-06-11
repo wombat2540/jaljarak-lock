@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color — 잘자락 DS</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      margin-bottom: 40px;
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.56px;
+      color: var(--color-text-primary);
+    }
+    .page-header p {
+      font-size: 14px;
+      color: var(--color-text-tertiary);
+      margin-top: 6px;
+      letter-spacing: -0.28px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      letter-spacing: -0.32px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+
+    .color-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .color-chip {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 80px;
+    }
+
+    .chip-swatch {
+      width: 80px;
+      height: 56px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+
+    .chip-token {
+      font-size: 10px;
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.2px;
+      word-break: break-all;
+      line-height: 1.4;
+    }
+
+    .chip-hex {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      letter-spacing: -0.22px;
+    }
+
+    /* Larger chips for scale */
+    .color-scale {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .scale-chip {
+      flex: 1;
+      min-width: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .scale-swatch {
+      height: 48px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .scale-label {
+      font-size: 10px;
+      color: var(--color-text-tertiary);
+      letter-spacing: -0.2px;
+      text-align: center;
+    }
+
+    .row-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .wide-chip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 10px;
+      padding: 10px 14px;
+      min-width: 260px;
+    }
+    .wide-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+    .wide-info { display: flex; flex-direction: column; gap: 2px; }
+    .wide-token { font-size: 12px; color: var(--color-text-secondary); letter-spacing: -0.24px; }
+    .wide-hex { font-size: 11px; color: var(--color-text-tertiary); letter-spacing: -0.22px; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Color</h1>
+    <p>잘자락 디자인 시스템의 컬러 토큰 — 다크톤, 암순응을 고려한 낮은 채도 기반</p>
+  </div>
+
+  <!-- Brand -->
+  <div class="section">
+    <div class="section-title">Brand — 라벤더 계열</div>
+    <div class="color-scale">
+      <div class="scale-chip">
+        <div class="scale-swatch" style="background:#F3EEFF;"></div>
+        <div class="scale-label">50<br>#F3EEFF</div>
+      </div>
+      <div class="scale-chip">
+        <div class="scale-swatch" style="background:#E4D4FC;"></div>
+        <div class="scale-label">100<br>#E4D4FC</div>
+      </div>
+      <div class="scale-chip">
+        <div class="scale-swatch" style="background:#D4B8F8;"></div>
+        <div class="scale-label">200<br>#D4B8F8</div>
+      </div>
+      <div class="scale-chip">
+        <div class="scale-swatch" style="background:#C4A0F4;"></div>
+        <div class="scale-label">300<br>#C4A0F4</div>
+      </div>
+      <div class="scale-chip" style="position:relative;">
+        <div class="scale-swatch" style="background:#B48EF0; box-shadow: 0 0 12px rgba(180,142,240,0.5);"></div>
+        <div class="scale-label" style="color:#B48EF0; font-weight:600;">400 ★<br>#B48EF0</div>
+      </div>
+      <div class="scale-chip">
+        <div class="scale-swatch" style="background:#9D72D8;"></div>
+        <div class="scale-label">500<br>#9D72D8</div>
+      </div>
+      <div class="scale-chip">
+        <div class="scale-swatch" style="background:#8A6BC4;"></div>
+        <div class="scale-label">600<br>#8A6BC4</div>
+      </div>
+      <div class="scale-chip">
+        <div class="scale-swatch" style="background:#6B4FA0;"></div>
+        <div class="scale-label">700<br>#6B4FA0</div>
+      </div>
+      <div class="scale-chip">
+        <div class="scale-swatch" style="background:#4D3478;"></div>
+        <div class="scale-label">800<br>#4D3478</div>
+      </div>
+      <div class="scale-chip">
+        <div class="scale-swatch" style="background:#2E1E50;"></div>
+        <div class="scale-label">900<br>#2E1E50</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background -->
+  <div class="section">
+    <div class="section-title">Background</div>
+    <div class="row-chips">
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#08080F; border:1px solid #2A2A3E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-bg-base</div>
+          <div class="wide-hex">#08080F</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#0D0D14; border:1px solid #2A2A3E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-bg-primary</div>
+          <div class="wide-hex">#0D0D14</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#16161F;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-bg-secondary</div>
+          <div class="wide-hex">#16161F</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#1E1E2E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-bg-tertiary</div>
+          <div class="wide-hex">#1E1E2E</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#252535;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-bg-elevated</div>
+          <div class="wide-hex">#252535</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Text -->
+  <div class="section">
+    <div class="section-title">Text</div>
+    <div class="row-chips">
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#F0EAF8;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-text-primary</div>
+          <div class="wide-hex">#F0EAF8</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#C4B8D8;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-text-secondary</div>
+          <div class="wide-hex">#C4B8D8</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#8A7FA0;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-text-tertiary</div>
+          <div class="wide-hex">#8A7FA0</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#4A4460;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-text-disabled</div>
+          <div class="wide-hex">#4A4460</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#0D0D14; border:1px solid #2A2A3E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-text-inverse</div>
+          <div class="wide-hex">#0D0D14</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#B48EF0;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-text-brand</div>
+          <div class="wide-hex">#B48EF0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Border -->
+  <div class="section">
+    <div class="section-title">Border</div>
+    <div class="row-chips">
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#2A2A3E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-border-default</div>
+          <div class="wide-hex">#2A2A3E</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#1E1E2E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-border-subtle</div>
+          <div class="wide-hex">#1E1E2E</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#3D3D5C;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-border-strong</div>
+          <div class="wide-hex">#3D3D5C</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#B48EF0;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-border-brand</div>
+          <div class="wide-hex">#B48EF0</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#D4B8F8;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-border-focus</div>
+          <div class="wide-hex">#D4B8F8</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System -->
+  <div class="section">
+    <div class="section-title">System</div>
+    <div class="row-chips">
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#7EC8A4;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-success-default</div>
+          <div class="wide-hex">#7EC8A4</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#1A3D2E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-success-subtle</div>
+          <div class="wide-hex">#1A3D2E</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#F0C87A;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-warning-default</div>
+          <div class="wide-hex">#F0C87A</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#3D2E0A;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-warning-subtle</div>
+          <div class="wide-hex">#3D2E0A</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#E87A7A;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-error-default</div>
+          <div class="wide-hex">#E87A7A</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#3D1A1A;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-error-subtle</div>
+          <div class="wide-hex">#3D1A1A</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#7AB8E8;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-info-default</div>
+          <div class="wide-hex">#7AB8E8</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:#1A2E3D;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-info-subtle</div>
+          <div class="wide-hex">#1A2E3D</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="section">
+    <div class="section-title">Overlay</div>
+    <div class="row-chips">
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:rgba(0,0,0,0.6); border:1px solid #2A2A3E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-overlay-dim</div>
+          <div class="wide-hex">rgba(0, 0, 0, 0.6)</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:rgba(0,0,0,0.8); border:1px solid #2A2A3E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-overlay-heavy</div>
+          <div class="wide-hex">rgba(0, 0, 0, 0.8)</div>
+        </div>
+      </div>
+      <div class="wide-chip">
+        <div class="wide-swatch" style="background:rgba(180,142,240,0.1); border:1px solid #2A2A3E;"></div>
+        <div class="wide-info">
+          <div class="wide-token">--color-overlay-brand</div>
+          <div class="wide-hex">rgba(180, 142, 240, 0.1)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive -->
+  <div class="section">
+    <div class="section-title">Interactive</div>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div>
+        <div style="font-size:12px; color:var(--color-text-tertiary); margin-bottom:8px; letter-spacing:-0.24px;">Primary Button</div>
+        <div class="row-chips">
+          <div class="wide-chip">
+            <div class="wide-swatch" style="background:#B48EF0;"></div>
+            <div class="wide-info">
+              <div class="wide-token">primary-default</div>
+              <div class="wide-hex">#B48EF0</div>
+            </div>
+          </div>
+          <div class="wide-chip">
+            <div class="wide-swatch" style="background:#C4A0F4;"></div>
+            <div class="wide-info">
+              <div class="wide-token">primary-hover</div>
+              <div class="wide-hex">#C4A0F4</div>
+            </div>
+          </div>
+          <div class="wide-chip">
+            <div class="wide-swatch" style="background:#9D72D8;"></div>
+            <div class="wide-info">
+              <div class="wide-token">primary-pressed</div>
+              <div class="wide-hex">#9D72D8</div>
+            </div>
+          </div>
+          <div class="wide-chip">
+            <div class="wide-swatch" style="background:#4A3D60;"></div>
+            <div class="wide-info">
+              <div class="wide-token">primary-disabled</div>
+              <div class="wide-hex">#4A3D60</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px; color:var(--color-text-tertiary); margin-bottom:8px; letter-spacing:-0.24px;">Secondary Button</div>
+        <div class="row-chips">
+          <div class="wide-chip">
+            <div class="wide-swatch" style="background:#1E1E2E;"></div>
+            <div class="wide-info">
+              <div class="wide-token">secondary-default</div>
+              <div class="wide-hex">#1E1E2E</div>
+            </div>
+          </div>
+          <div class="wide-chip">
+            <div class="wide-swatch" style="background:#252535;"></div>
+            <div class="wide-info">
+              <div class="wide-token">secondary-hover</div>
+              <div class="wide-hex">#252535</div>
+            </div>
+          </div>
+          <div class="wide-chip">
+            <div class="wide-swatch" style="background:#16161F;"></div>
+            <div class="wide-info">
+              <div class="wide-token">secondary-pressed</div>
+              <div class="wide-hex">#16161F</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

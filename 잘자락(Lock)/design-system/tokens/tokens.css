@@ -1,0 +1,243 @@
+:root {
+  /* ===================== COLOR ===================== */
+
+  /* Brand */
+  --color-brand-50: #F3EEFF;
+  --color-brand-100: #E4D4FC;
+  --color-brand-200: #D4B8F8;
+  --color-brand-300: #C4A0F4;
+  --color-brand-400: #B48EF0;
+  --color-brand-500: #9D72D8;
+  --color-brand-600: #8A6BC4;
+  --color-brand-700: #6B4FA0;
+  --color-brand-800: #4D3478;
+  --color-brand-900: #2E1E50;
+
+  /* Background */
+  --color-bg-base: #08080F;
+  --color-bg-primary: #0D0D14;
+  --color-bg-secondary: #16161F;
+  --color-bg-tertiary: #1E1E2E;
+  --color-bg-elevated: #252535;
+
+  /* Text */
+  --color-text-primary: #F0EAF8;
+  --color-text-secondary: #C4B8D8;
+  --color-text-tertiary: #8A7FA0;
+  --color-text-disabled: #4A4460;
+  --color-text-inverse: #0D0D14;
+  --color-text-brand: #B48EF0;
+
+  /* Border */
+  --color-border-default: #2A2A3E;
+  --color-border-subtle: #1E1E2E;
+  --color-border-strong: #3D3D5C;
+  --color-border-brand: #B48EF0;
+  --color-border-focus: #D4B8F8;
+
+  /* System */
+  --color-success-default: #7EC8A4;
+  --color-success-subtle: #1A3D2E;
+  --color-warning-default: #F0C87A;
+  --color-warning-subtle: #3D2E0A;
+  --color-error-default: #E87A7A;
+  --color-error-subtle: #3D1A1A;
+  --color-info-default: #7AB8E8;
+  --color-info-subtle: #1A2E3D;
+
+  /* Overlay */
+  --color-overlay-dim: rgba(0, 0, 0, 0.6);
+  --color-overlay-heavy: rgba(0, 0, 0, 0.8);
+  --color-overlay-brand: rgba(180, 142, 240, 0.1);
+
+  /* Interactive - Primary */
+  --color-interactive-primary-default: #B48EF0;
+  --color-interactive-primary-hover: #C4A0F4;
+  --color-interactive-primary-pressed: #9D72D8;
+  --color-interactive-primary-disabled: #4A3D60;
+
+  /* Interactive - Secondary */
+  --color-interactive-secondary-default: #1E1E2E;
+  --color-interactive-secondary-hover: #252535;
+  --color-interactive-secondary-pressed: #16161F;
+  --color-interactive-secondary-disabled: #111118;
+
+  /* Interactive - Ghost */
+  --color-interactive-ghost-default: transparent;
+  --color-interactive-ghost-hover: rgba(180, 142, 240, 0.1);
+  --color-interactive-ghost-pressed: rgba(180, 142, 240, 0.2);
+  --color-interactive-ghost-disabled: transparent;
+
+  /* ===================== TYPOGRAPHY ===================== */
+
+  /* Font Family */
+  --font-family-base: 'Pretendard', sans-serif;
+
+  /* Font Size */
+  --font-size-12: 12px;
+  --font-size-14: 14px;
+  --font-size-16: 16px;
+  --font-size-18: 18px;
+  --font-size-20: 20px;
+  --font-size-24: 24px;
+  --font-size-28: 28px;
+  --font-size-32: 32px;
+  --font-size-40: 40px;
+  --font-size-56: 56px;
+
+  /* Font Weight */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Height */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-loose: 1.8;
+
+  /* Letter Spacing */
+  --letter-spacing-12: -0.24px;
+  --letter-spacing-14: -0.28px;
+  --letter-spacing-16: -0.32px;
+  --letter-spacing-18: -0.36px;
+  --letter-spacing-20: -0.40px;
+  --letter-spacing-24: -0.48px;
+  --letter-spacing-28: -0.56px;
+  --letter-spacing-32: -0.64px;
+  --letter-spacing-40: -0.80px;
+  --letter-spacing-56: -1.12px;
+
+  /* ===================== SPACING ===================== */
+
+  /* Base Scale */
+  --spacing-2: 2px;
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-56: 56px;
+  --spacing-64: 64px;
+
+  /* Layout */
+  --layout-padding-horizontal: 20px;
+  --layout-padding-vertical: 24px;
+  --layout-gap-sm: 8px;
+  --layout-gap-md: 16px;
+  --layout-gap-lg: 24px;
+
+  /* Button Spacing */
+  --button-padding-vertical-sm: 12px;
+  --button-padding-horizontal-sm: 16px;
+  --button-padding-vertical-md: 12px;
+  --button-padding-horizontal-md: 24px;
+  --button-padding-vertical-lg: 16px;
+  --button-padding-horizontal-lg: 32px;
+
+  /* Input Spacing */
+  --input-padding-vertical: 14px;
+  --input-padding-horizontal: 16px;
+
+  /* Card Spacing */
+  --card-padding: 20px;
+
+  /* Bottom Sheet Spacing */
+  --bottom-sheet-padding-top: 24px;
+  --bottom-sheet-padding-horizontal: 20px;
+  --bottom-sheet-padding-bottom: 40px;
+
+  /* Navigation Bar Spacing */
+  --navbar-height: 56px;
+  --navbar-padding-bottom: 16px;
+
+  /* ===================== BORDER RADIUS ===================== */
+
+  /* Base Scale */
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-20: 20px;
+  --radius-24: 24px;
+  --radius-32: 32px;
+  --radius-full: 9999px;
+
+  /* Button Radius */
+  --button-radius-sm: 12px;
+  --button-radius-md: 12px;
+  --button-radius-lg: 16px;
+  --button-radius-full: 9999px;
+
+  /* Component Radius */
+  --input-radius: 12px;
+  --card-radius: 16px;
+  --badge-radius: 9999px;
+  --bottom-sheet-radius: 24px;
+  --toggle-radius: 9999px;
+  --progress-radius: 9999px;
+  --navbar-radius: 0px;
+
+  /* ===================== SHADOW ===================== */
+
+  /* Elevation */
+  --shadow-sm: 0px 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0px 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0px 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0px 16px 40px rgba(0, 0, 0, 0.6);
+
+  /* Brand Glow */
+  --shadow-glow-sm: 0px 0px 8px rgba(180, 142, 240, 0.3);
+  --shadow-glow-md: 0px 0px 16px rgba(180, 142, 240, 0.4);
+  --shadow-glow-lg: 0px 0px 32px rgba(180, 142, 240, 0.5);
+  --shadow-glow-xl: 0px 0px 56px rgba(180, 142, 240, 0.6);
+
+  /* Inner Glow */
+  --shadow-inner: inset 0px 1px 4px rgba(0, 0, 0, 0.4);
+  --shadow-inner-brand: inset 0px 0px 8px rgba(180, 142, 240, 0.2);
+
+  /* Component Shadow */
+  --button-shadow-default: 0px 0px 8px rgba(180, 142, 240, 0.3);
+  --card-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
+  --bottom-sheet-shadow: 0px 8px 24px rgba(0, 0, 0, 0.5);
+  --navbar-shadow: 0px -1px 0px rgba(255, 255, 255, 0.05);
+  --motif-shadow: 0px 0px 56px rgba(180, 142, 240, 0.6);
+
+  /* ===================== ICON ===================== */
+
+  /* Icon Size */
+  --icon-size-16: 16px;
+  --icon-size-20: 20px;
+  --icon-size-24: 24px;
+  --icon-size-32: 32px;
+  --icon-size-40: 40px;
+  --icon-size-48: 48px;
+  --icon-size-56: 56px;
+  --icon-size-80: 80px;
+  --icon-size-120: 120px;
+
+  /* Icon Color */
+  --icon-color-default: #A89BBF;
+  --icon-color-active: #B48EF0;
+  --icon-color-disabled: #4A4460;
+  --icon-color-inverse: #0D0D14;
+  --icon-color-brand: #B48EF0;
+
+  /* Lavender Motif */
+  --motif-splash: 120px;
+  --motif-onboarding: 80px;
+  --motif-lock: 80px;
+  --motif-reward: 24px;
+  --motif-logo: 32px;
+
+  --motif-color-primary: #B48EF0;
+  --motif-color-light: #D4B8F8;
+  --motif-color-dark: #8A6BC4;
+  --motif-color-stem: #7EC8A4;
+  --motif-color-glow: rgba(180, 142, 240, 0.3);
+}

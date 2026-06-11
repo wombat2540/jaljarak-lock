@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toggle — 잘자락 DS</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.56px; }
+    .page-header p { font-size: 14px; color: var(--color-text-tertiary); margin-top: 6px; letter-spacing: -0.28px; }
+
+    .section { margin-bottom: 48px; }
+    .section-title {
+      font-size: 16px; font-weight: 600; color: var(--color-text-secondary);
+      letter-spacing: -0.32px; margin-bottom: 6px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .section-desc { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 24px; letter-spacing: -0.24px; }
+
+    .state-grid { display: flex; flex-wrap: wrap; gap: 32px; }
+    .state-col { display: flex; flex-direction: column; gap: 16px; }
+    .state-label { font-size: 11px; color: var(--color-text-tertiary); letter-spacing: -0.22px; text-align: center; }
+    .state-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+    /* ===== SWITCH ===== */
+    .switch {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .switch input { display: none; }
+
+    .switch-track-md {
+      width: 51px; height: 31px;
+      background: #1E1E2E;
+      border: 1px solid #2A2A3E;
+      border-radius: 9999px;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+    .switch-thumb-md {
+      position: absolute;
+      top: 50%; left: 3px;
+      transform: translateY(-50%);
+      width: 23px; height: 23px;
+      background: #8A7FA0;
+      border-radius: 50%;
+      transition: all 0.25s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .switch input:checked + .switch-track-md {
+      background: #B48EF0;
+      border-color: #B48EF0;
+      box-shadow: 0 0 8px rgba(180,142,240,0.3);
+    }
+    .switch input:checked + .switch-track-md .switch-thumb-md {
+      left: calc(100% - 26px);
+      background: #0D0D14;
+    }
+    .switch.disabled .switch-track-md {
+      background: #16161F;
+      border-color: #1E1E2E;
+      cursor: not-allowed;
+    }
+    .switch.disabled .switch-thumb-md { background: #4A4460; }
+    .switch.disabled-on .switch-track-md {
+      background: #4A3D60;
+      border-color: #4A3D60;
+      cursor: not-allowed;
+    }
+    .switch.disabled-on .switch-thumb-md {
+      left: calc(100% - 26px);
+      background: #4A4460;
+    }
+
+    /* LG Switch */
+    .switch-track-lg {
+      width: 60px; height: 36px;
+      background: #1E1E2E;
+      border: 1px solid #2A2A3E;
+      border-radius: 9999px;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+    .switch-thumb-lg {
+      position: absolute;
+      top: 50%; left: 3px;
+      transform: translateY(-50%);
+      width: 28px; height: 28px;
+      background: #8A7FA0;
+      border-radius: 50%;
+      transition: all 0.25s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .switch input:checked + .switch-track-lg {
+      background: #B48EF0;
+      border-color: #B48EF0;
+      box-shadow: 0 0 8px rgba(180,142,240,0.3);
+    }
+    .switch input:checked + .switch-track-lg .switch-thumb-lg {
+      left: calc(100% - 31px);
+      background: #0D0D14;
+    }
+
+    /* ===== CHECKBOX ===== */
+    .checkbox-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-wrap input { display: none; }
+
+    .checkbox-box-md {
+      width: 24px; height: 24px;
+      background: #1E1E2E;
+      border: 1px solid #2A2A3E;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .checkbox-box-lg {
+      width: 28px; height: 28px;
+      background: #1E1E2E;
+      border: 1px solid #2A2A3E;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .checkbox-check { display: none; }
+
+    .checkbox-wrap input:checked ~ .checkbox-box-md,
+    .checkbox-wrap input:checked ~ .checkbox-box-lg {
+      background: #B48EF0;
+      border-color: #B48EF0;
+      box-shadow: 0 0 8px rgba(180,142,240,0.3);
+    }
+    .checkbox-wrap input:checked ~ .checkbox-box-md .checkbox-check,
+    .checkbox-wrap input:checked ~ .checkbox-box-lg .checkbox-check {
+      display: block;
+      color: #0D0D14;
+      font-size: 14px;
+    }
+    .checkbox-wrap.disabled { cursor: not-allowed; opacity: 0.5; }
+
+    /* ===== RADIO ===== */
+    .radio-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .radio-wrap input { display: none; }
+
+    .radio-circle {
+      width: 24px; height: 24px;
+      background: #1E1E2E;
+      border: 1px solid #2A2A3E;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .radio-dot {
+      width: 10px; height: 10px;
+      background: #B48EF0;
+      border-radius: 50%;
+      display: none;
+    }
+    .radio-wrap input:checked ~ .radio-circle {
+      background: #0D0D14;
+      border: 2px solid #B48EF0;
+      box-shadow: 0 0 8px rgba(180,142,240,0.3);
+    }
+    .radio-wrap input:checked ~ .radio-circle .radio-dot { display: block; }
+    .radio-wrap.disabled { cursor: not-allowed; opacity: 0.5; }
+
+    /* Row layouts */
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 14px;
+      gap: 12px;
+    }
+    .toggle-row-info { display: flex; flex-direction: column; gap: 2px; }
+    .toggle-row-title { font-size: 15px; font-weight: 500; color: #F0EAF8; letter-spacing: -0.30px; }
+    .toggle-row-desc { font-size: 12px; color: #8A7FA0; letter-spacing: -0.24px; }
+
+    .list-item {
+      display: flex; align-items: center;
+      padding: 14px 20px;
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 14px;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .list-item:first-child { border-radius: 14px 14px 4px 4px; }
+    .list-item:last-child { border-radius: 4px 4px 14px 14px; }
+    .list-item:only-child { border-radius: 14px; }
+    .list-group { display: flex; flex-direction: column; gap: 2px; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Toggle</h1>
+    <p>Switch / Checkbox / Radio — 실제 클릭 시 상태 변경</p>
+  </div>
+
+  <!-- Switch -->
+  <div class="section">
+    <div class="section-title">Switch</div>
+    <div class="section-desc">취침 알람 활성/비활성 — MD 51×31px / LG 60×36px</div>
+
+    <div class="state-grid" style="margin-bottom:32px;">
+      <div class="state-item">
+        <div class="state-label">Off Default</div>
+        <label class="switch">
+          <input type="checkbox">
+          <div class="switch-track-md"><div class="switch-thumb-md"></div></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">On Default</div>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <div class="switch-track-md"><div class="switch-thumb-md"></div></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">Disabled Off</div>
+        <label class="switch disabled">
+          <input type="checkbox" disabled>
+          <div class="switch-track-md"><div class="switch-thumb-md"></div></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">Disabled On</div>
+        <label class="switch disabled-on">
+          <input type="checkbox" disabled>
+          <div class="switch-track-md"><div class="switch-thumb-md"></div></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">LG Off</div>
+        <label class="switch">
+          <input type="checkbox">
+          <div class="switch-track-lg"><div class="switch-thumb-lg"></div></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">LG On</div>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <div class="switch-track-lg"><div class="switch-thumb-lg"></div></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- In-context -->
+    <div style="max-width:400px; display:flex; flex-direction:column; gap:8px;">
+      <div class="toggle-row">
+        <div class="toggle-row-info">
+          <div class="toggle-row-title">취침 알람</div>
+          <div class="toggle-row-desc">매일 밤 11:00 PM 알림</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <div class="switch-track-md"><div class="switch-thumb-md"></div></div>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-row-info">
+          <div class="toggle-row-title">기상 알람</div>
+          <div class="toggle-row-desc">아침 7:30 AM 알림</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox">
+          <div class="switch-track-md"><div class="switch-thumb-md"></div></div>
+        </label>
+      </div>
+      <div class="toggle-row" style="opacity:0.5; cursor:not-allowed;">
+        <div class="toggle-row-info">
+          <div class="toggle-row-title">집중 모드</div>
+          <div class="toggle-row-desc">프리미엄 기능</div>
+        </div>
+        <label class="switch disabled">
+          <input type="checkbox" disabled>
+          <div class="switch-track-md"><div class="switch-thumb-md"></div></div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkbox -->
+  <div class="section">
+    <div class="section-title">Checkbox</div>
+    <div class="section-desc">차단 앱 선택 목록 — MD 24px / LG 28px</div>
+
+    <div class="state-grid" style="margin-bottom:32px;">
+      <div class="state-item">
+        <div class="state-label">Off MD</div>
+        <label class="checkbox-wrap">
+          <input type="checkbox">
+          <div class="checkbox-box-md"><i class="ph ph-check checkbox-check" style="font-size:14px; font-weight:700;"></i></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">On MD</div>
+        <label class="checkbox-wrap">
+          <input type="checkbox" checked>
+          <div class="checkbox-box-md"><i class="ph ph-check checkbox-check" style="font-size:14px; font-weight:700;"></i></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">Off LG</div>
+        <label class="checkbox-wrap">
+          <input type="checkbox">
+          <div class="checkbox-box-lg"><i class="ph ph-check checkbox-check" style="font-size:16px; font-weight:700;"></i></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">On LG</div>
+        <label class="checkbox-wrap">
+          <input type="checkbox" checked>
+          <div class="checkbox-box-lg"><i class="ph ph-check checkbox-check" style="font-size:16px; font-weight:700;"></i></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">Disabled</div>
+        <label class="checkbox-wrap disabled">
+          <input type="checkbox" disabled>
+          <div class="checkbox-box-md"><i class="ph ph-check checkbox-check"></i></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- In-context -->
+    <div style="max-width:400px;">
+      <div class="list-group">
+        <label class="list-item">
+          <input type="checkbox" checked style="display:none;" onchange="syncCheck(this)">
+          <div class="checkbox-box-md"><i class="ph ph-check checkbox-check" style="font-size:14px;"></i></div>
+          <div style="flex:1;">
+            <div style="font-size:15px; font-weight:500; color:#F0EAF8; letter-spacing:-0.30px;">Instagram</div>
+            <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">소셜 미디어</div>
+          </div>
+        </label>
+        <label class="list-item">
+          <input type="checkbox" style="display:none;" onchange="syncCheck(this)">
+          <div class="checkbox-box-md"><i class="ph ph-check checkbox-check" style="font-size:14px;"></i></div>
+          <div style="flex:1;">
+            <div style="font-size:15px; font-weight:500; color:#F0EAF8; letter-spacing:-0.30px;">YouTube</div>
+            <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">동영상</div>
+          </div>
+        </label>
+        <label class="list-item">
+          <input type="checkbox" checked style="display:none;" onchange="syncCheck(this)">
+          <div class="checkbox-box-md"><i class="ph ph-check checkbox-check" style="font-size:14px;"></i></div>
+          <div style="flex:1;">
+            <div style="font-size:15px; font-weight:500; color:#F0EAF8; letter-spacing:-0.30px;">TikTok</div>
+            <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">숏폼 영상</div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Radio -->
+  <div class="section">
+    <div class="section-title">Radio</div>
+    <div class="section-desc">미션 난이도 선택 — MD 24px / LG 28px</div>
+
+    <div class="state-grid" style="margin-bottom:32px;">
+      <div class="state-item">
+        <div class="state-label">Off</div>
+        <label class="radio-wrap">
+          <input type="radio" name="demo">
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">On</div>
+        <label class="radio-wrap">
+          <input type="radio" name="demo" checked>
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+        </label>
+      </div>
+      <div class="state-item">
+        <div class="state-label">Disabled</div>
+        <label class="radio-wrap disabled">
+          <input type="radio" name="demo2" disabled>
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- In-context -->
+    <div style="max-width:400px;">
+      <div style="font-size:14px; font-weight:600; color:#C4B8D8; margin-bottom:12px; letter-spacing:-0.28px;">미션 난이도 선택</div>
+      <div class="list-group">
+        <label class="list-item" style="gap:14px;">
+          <input type="radio" name="difficulty" value="easy" style="display:none;" checked onchange="syncRadio(this)">
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+          <div style="flex:1;">
+            <div style="font-size:15px; font-weight:500; color:#F0EAF8; letter-spacing:-0.30px;">쉬움</div>
+            <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">취침 30분 전 알람</div>
+          </div>
+          <div style="padding:3px 10px; background:rgba(126,200,164,0.15); border:1px solid rgba(126,200,164,0.3); border-radius:9999px; font-size:11px; color:#7EC8A4;">+50P</div>
+        </label>
+        <label class="list-item" style="gap:14px;">
+          <input type="radio" name="difficulty" value="normal" style="display:none;" onchange="syncRadio(this)">
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+          <div style="flex:1;">
+            <div style="font-size:15px; font-weight:500; color:#F0EAF8; letter-spacing:-0.30px;">보통</div>
+            <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">취침 1시간 전 앱 잠금</div>
+          </div>
+          <div style="padding:3px 10px; background:rgba(180,142,240,0.15); border:1px solid rgba(180,142,240,0.3); border-radius:9999px; font-size:11px; color:#C4A0F4;">+100P</div>
+        </label>
+        <label class="list-item" style="gap:14px;">
+          <input type="radio" name="difficulty" value="hard" style="display:none;" onchange="syncRadio(this)">
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+          <div style="flex:1;">
+            <div style="font-size:15px; font-weight:500; color:#F0EAF8; letter-spacing:-0.30px;">어려움</div>
+            <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">취침 2시간 전 완전 잠금</div>
+          </div>
+          <div style="padding:3px 10px; background:rgba(240,200,122,0.15); border:1px solid rgba(240,200,122,0.3); border-radius:9999px; font-size:11px; color:#F0C87A;">+200P</div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Make in-context checkboxes work visually
+    document.querySelectorAll('.list-item input[type="checkbox"]').forEach(input => {
+      const box = input.nextElementSibling;
+      if (input.checked) {
+        box.style.background = '#B48EF0';
+        box.style.borderColor = '#B48EF0';
+        box.style.boxShadow = '0 0 8px rgba(180,142,240,0.3)';
+        box.querySelector('.checkbox-check').style.display = 'block';
+        box.querySelector('.checkbox-check').style.color = '#0D0D14';
+      }
+      input.addEventListener('change', function() {
+        if (this.checked) {
+          box.style.background = '#B48EF0';
+          box.style.borderColor = '#B48EF0';
+          box.style.boxShadow = '0 0 8px rgba(180,142,240,0.3)';
+          box.querySelector('.checkbox-check').style.display = 'block';
+          box.querySelector('.checkbox-check').style.color = '#0D0D14';
+        } else {
+          box.style.background = '#1E1E2E';
+          box.style.borderColor = '#2A2A3E';
+          box.style.boxShadow = 'none';
+          box.querySelector('.checkbox-check').style.display = 'none';
+        }
+      });
+    });
+
+    // Radio sync
+    document.querySelectorAll('.list-item input[type="radio"]').forEach(input => {
+      const circle = input.nextElementSibling;
+      const dot = circle.querySelector('.radio-dot');
+      if (input.checked) {
+        circle.style.background = '#0D0D14';
+        circle.style.border = '2px solid #B48EF0';
+        circle.style.boxShadow = '0 0 8px rgba(180,142,240,0.3)';
+        dot.style.display = 'block';
+      }
+      input.addEventListener('change', function() {
+        document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+          const c = r.nextElementSibling;
+          const d = c.querySelector('.radio-dot');
+          c.style.background = '#1E1E2E';
+          c.style.border = '1px solid #2A2A3E';
+          c.style.boxShadow = 'none';
+          d.style.display = 'none';
+        });
+        circle.style.background = '#0D0D14';
+        circle.style.border = '2px solid #B48EF0';
+        circle.style.boxShadow = '0 0 8px rgba(180,142,240,0.3)';
+        dot.style.display = 'block';
+      });
+    });
+  </script>
+</body>
+</html>
