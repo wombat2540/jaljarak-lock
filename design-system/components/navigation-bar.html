@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation Bar — 잘자락 DS</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.56px; }
+    .page-header p { font-size: 14px; color: var(--color-text-tertiary); margin-top: 6px; letter-spacing: -0.28px; }
+
+    .section { margin-bottom: 48px; }
+    .section-title {
+      font-size: 16px; font-weight: 600; color: var(--color-text-secondary);
+      letter-spacing: -0.32px; margin-bottom: 6px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .section-desc { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 20px; letter-spacing: -0.24px; }
+
+    /* ===== PHONE MOCKUP ===== */
+    .phone-wrap {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .phone {
+      width: 375px;
+      height: 680px;
+      background: #0D0D14;
+      border-radius: 36px;
+      border: 1.5px solid #2A2A3E;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+
+    /* Page content */
+    .page-content {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .page {
+      display: none;
+      height: 100%;
+      padding: 40px 20px 20px;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .page.active { display: flex; }
+
+    .page-title {
+      font-size: 24px; font-weight: 700; color: #F0EAF8; letter-spacing: -0.48px;
+    }
+    .page-subtitle { font-size: 14px; color: #8A7FA0; letter-spacing: -0.28px; }
+
+    .home-time {
+      font-size: 56px; font-weight: 700; color: #B48EF0; letter-spacing: -1.12px;
+      text-align: center; margin: 24px 0;
+      filter: drop-shadow(0 0 16px rgba(180,142,240,0.4));
+    }
+
+    .mini-card {
+      background: #16161F;
+      border: 1px solid #1E1E2E;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mini-card i { font-size: 18px; color: #B48EF0; }
+    .mini-card-text { font-size: 13px; color: #C4B8D8; letter-spacing: -0.26px; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      height: 72px;
+      background: #16161F;
+      border-top: 1px solid #1E1E2E;
+      box-shadow: 0px -1px 0px rgba(255,255,255,0.05);
+      display: flex;
+      align-items: flex-start;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .nav-tab {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      padding-top: 10px;
+      padding-bottom: 16px;
+      transition: opacity 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+    .nav-tab:active { opacity: 0.7; }
+
+    .nav-icon {
+      font-size: 22px;
+      color: #A89BBF;
+      transition: all 0.2s ease;
+    }
+    .nav-label {
+      font-size: 11px;
+      font-weight: 400;
+      color: #8A7FA0;
+      letter-spacing: -0.22px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-indicator {
+      width: 4px; height: 4px;
+      background: #B48EF0;
+      border-radius: 50%;
+      margin-top: 2px;
+      box-shadow: 0 0 8px rgba(180,142,240,0.3);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .nav-tab.active .nav-icon {
+      color: #B48EF0;
+      filter: drop-shadow(0 0 6px rgba(180,142,240,0.4));
+      transform: scale(1.0);
+    }
+    .nav-tab.active .nav-label {
+      color: #B48EF0;
+      font-weight: 600;
+    }
+    .nav-tab.active .nav-indicator { opacity: 1; }
+
+    @keyframes tabBounce {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    .nav-tab.bounce .nav-icon { animation: tabBounce 0.15s ease-out; }
+
+    /* State examples */
+    .state-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .state-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .state-label { font-size: 11px; color: var(--color-text-tertiary); letter-spacing: -0.22px; }
+
+    .tab-example {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 10px 20px 14px;
+      background: #16161F;
+      border: 1px solid #2A2A3E;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    /* Spec table */
+    .spec-table {
+      width: 100%;
+      max-width: 560px;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .spec-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      letter-spacing: -0.22px;
+    }
+    .spec-table td {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(42,42,62,0.5);
+      letter-spacing: -0.26px;
+    }
+    .spec-table td:first-child { color: var(--color-text-brand); }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Navigation Bar</h1>
+    <p>하단 고정 4탭 — 탭 전환 동작, Active Indicator, 탭 바운스 애니메이션</p>
+  </div>
+
+  <!-- Interactive Demo -->
+  <div class="section">
+    <div class="section-title">Interactive Demo</div>
+    <div class="section-desc">탭을 클릭하여 전환 — 아이콘 scale 애니메이션 + Active Indicator</div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="page-content">
+          <!-- Home -->
+          <div class="page active" id="page-home">
+            <div class="page-title">홈</div>
+            <div class="page-subtitle">오늘 밤 11시 취침 목표</div>
+            <div style="text-align:center; padding:8px 0;">
+              <svg width="48" height="48" viewBox="0 0 72 72" fill="none" style="margin:0 auto; display:block; filter:drop-shadow(0 0 12px rgba(180,142,240,0.5));">
+                <ellipse cx="36" cy="52" rx="6" ry="12" fill="#7EC8A4"/>
+                <ellipse cx="36" cy="36" rx="9" ry="14" fill="#B48EF0" opacity="0.9"/>
+                <ellipse cx="25" cy="30" rx="6.5" ry="11.5" fill="#C4A0F4" opacity="0.7" transform="rotate(-20 25 30)"/>
+                <ellipse cx="47" cy="30" rx="6.5" ry="11.5" fill="#C4A0F4" opacity="0.7" transform="rotate(20 47 30)"/>
+              </svg>
+            </div>
+            <div class="home-time">23:00</div>
+            <div class="mini-card"><i class="ph ph-moon"></i><span class="mini-card-text">취침까지 2시간 30분 남음</span></div>
+            <div class="mini-card"><i class="ph ph-fire" style="color:#F0C87A;"></i><span class="mini-card-text">연속 12일 달성 중 🎉</span></div>
+          </div>
+
+          <!-- Report -->
+          <div class="page" id="page-report">
+            <div class="page-title">리포트</div>
+            <div class="page-subtitle">이번 주 수면 분석</div>
+            <div style="padding:16px 0;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:13px; color:#8A7FA0; letter-spacing:-0.26px;">주간 달성률</span>
+                <span style="font-size:13px; font-weight:600; color:#B48EF0; letter-spacing:-0.26px;">86%</span>
+              </div>
+              <div style="height:8px; background:#1E1E2E; border-radius:9999px; overflow:hidden;">
+                <div style="height:100%; width:86%; background:#B48EF0; border-radius:9999px; box-shadow:0 0 8px rgba(180,142,240,0.3);"></div>
+              </div>
+            </div>
+            <div class="mini-card"><i class="ph ph-chart-bar"></i><span class="mini-card-text">평균 취침: 23:15</span></div>
+            <div class="mini-card"><i class="ph ph-arrow-up" style="color:#7EC8A4;"></i><span class="mini-card-text">지난주 대비 +12% 향상</span></div>
+          </div>
+
+          <!-- Reward -->
+          <div class="page" id="page-reward">
+            <div class="page-title">리워드</div>
+            <div class="page-subtitle">획득한 포인트로 쿠폰을 교환하세요</div>
+            <div class="mini-card" style="border-color:rgba(180,142,240,0.2); box-shadow:0 0 8px rgba(180,142,240,0.1);">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <ellipse cx="12" cy="18" rx="2" ry="4.5" fill="#7EC8A4"/>
+                <ellipse cx="12" cy="11" rx="3" ry="5" fill="#B48EF0"/>
+                <ellipse cx="7" cy="9" rx="2.2" ry="4" fill="#C4A0F4" transform="rotate(-22 7 9)"/>
+                <ellipse cx="17" cy="9" rx="2.2" ry="4" fill="#C4A0F4" transform="rotate(22 17 9)"/>
+              </svg>
+              <span style="font-size:22px; font-weight:700; color:#F0EAF8; letter-spacing:-0.44px;">2,340P</span>
+            </div>
+            <div class="mini-card"><i class="ph ph-ticket"></i><span class="mini-card-text">교환 가능한 쿠폰 3개</span></div>
+            <div class="mini-card"><i class="ph ph-star" style="color:#F0C87A;"></i><span class="mini-card-text">이번 달 +800P 획득</span></div>
+          </div>
+
+          <!-- Settings -->
+          <div class="page" id="page-settings">
+            <div class="page-title">설정</div>
+            <div class="page-subtitle">앱 환경을 설정하세요</div>
+            <div class="mini-card"><i class="ph ph-bell"></i><span class="mini-card-text">알림 설정</span></div>
+            <div class="mini-card"><i class="ph ph-lock"></i><span class="mini-card-text">앱 차단 관리</span></div>
+            <div class="mini-card"><i class="ph ph-moon"></i><span class="mini-card-text">취침 목표 설정</span></div>
+            <div class="mini-card"><i class="ph ph-user"></i><span class="mini-card-text">계정 관리</span></div>
+          </div>
+        </div>
+
+        <nav class="navbar">
+          <div class="nav-tab active" id="tab-home" onclick="switchTab('home')">
+            <i class="ph ph-house nav-icon"></i>
+            <span class="nav-label">홈</span>
+            <div class="nav-indicator"></div>
+          </div>
+          <div class="nav-tab" id="tab-report" onclick="switchTab('report')">
+            <i class="ph ph-chart-bar nav-icon"></i>
+            <span class="nav-label">리포트</span>
+            <div class="nav-indicator"></div>
+          </div>
+          <div class="nav-tab" id="tab-reward" onclick="switchTab('reward')">
+            <i class="ph ph-gift nav-icon"></i>
+            <span class="nav-label">리워드</span>
+            <div class="nav-indicator"></div>
+          </div>
+          <div class="nav-tab" id="tab-settings" onclick="switchTab('settings')">
+            <i class="ph ph-gear nav-icon"></i>
+            <span class="nav-label">설정</span>
+            <div class="nav-indicator"></div>
+          </div>
+        </nav>
+      </div>
+
+      <!-- Spec panel -->
+      <div style="display:flex; flex-direction:column; gap:24px;">
+        <div>
+          <div style="font-size:13px; font-weight:600; color:var(--color-text-secondary); margin-bottom:12px; letter-spacing:-0.26px;">구조 스펙</div>
+          <table class="spec-table">
+            <tr><th>속성</th><th>값</th></tr>
+            <tr><td>높이</td><td>56px (+ bottom padding 16px = 72px)</td></tr>
+            <tr><td>배경</td><td>#16161F</td></tr>
+            <tr><td>상단 테두리</td><td>1px solid #1E1E2E</td></tr>
+            <tr><td>그림자</td><td>0px -1px 0px rgba(255,255,255,0.05)</td></tr>
+            <tr><td>최소 터치 영역</td><td>44px × 44px (각 탭)</td></tr>
+          </table>
+        </div>
+        <div>
+          <div style="font-size:13px; font-weight:600; color:var(--color-text-secondary); margin-bottom:12px; letter-spacing:-0.26px;">상태별 스타일</div>
+          <table class="spec-table">
+            <tr><th>상태</th><th>아이콘 색</th><th>라벨 색</th></tr>
+            <tr><td>Default</td><td>#A89BBF</td><td>#8A7FA0 / 400</td></tr>
+            <tr><td>Active</td><td>#B48EF0 + glow</td><td>#B48EF0 / 600</td></tr>
+            <tr><td>Pressed</td><td colspan="2">opacity: 0.7</td></tr>
+          </table>
+        </div>
+        <div>
+          <div style="font-size:13px; font-weight:600; color:var(--color-text-secondary); margin-bottom:12px; letter-spacing:-0.26px;">Active Indicator</div>
+          <table class="spec-table">
+            <tr><th>속성</th><th>값</th></tr>
+            <tr><td>크기</td><td>4px × 4px</td></tr>
+            <tr><td>배경</td><td>#B48EF0</td></tr>
+            <tr><td>형태</td><td>border-radius: 9999px</td></tr>
+            <tr><td>그림자</td><td>0 0 8px rgba(180,142,240,0.3)</td></tr>
+            <tr><td>등장</td><td>opacity 0 → 1 / 150ms</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- State examples -->
+  <div class="section">
+    <div class="section-title">State</div>
+    <div class="section-desc">Default / Active / Pressed 시각적 비교</div>
+
+    <div class="state-row">
+      <div class="state-item">
+        <div class="state-label">Default</div>
+        <div class="tab-example">
+          <i class="ph ph-house" style="font-size:22px; color:#A89BBF;"></i>
+          <span style="font-size:11px; color:#8A7FA0; letter-spacing:-0.22px;">홈</span>
+          <div style="width:4px; height:4px; border-radius:50%; opacity:0;"></div>
+        </div>
+      </div>
+      <div class="state-item">
+        <div class="state-label">Active</div>
+        <div class="tab-example">
+          <i class="ph ph-house" style="font-size:22px; color:#B48EF0; filter:drop-shadow(0 0 6px rgba(180,142,240,0.4));"></i>
+          <span style="font-size:11px; font-weight:600; color:#B48EF0; letter-spacing:-0.22px;">홈</span>
+          <div style="width:4px; height:4px; border-radius:50%; background:#B48EF0; box-shadow:0 0 8px rgba(180,142,240,0.3);"></div>
+        </div>
+      </div>
+      <div class="state-item">
+        <div class="state-label">Pressed</div>
+        <div class="tab-example" style="opacity:0.7;">
+          <i class="ph ph-house" style="font-size:22px; color:#B48EF0;"></i>
+          <span style="font-size:11px; font-weight:600; color:#B48EF0; letter-spacing:-0.22px;">홈</span>
+          <div style="width:4px; height:4px; border-radius:50%; background:#B48EF0;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      const tabs = ['home', 'report', 'reward', 'settings'];
+
+      tabs.forEach(t => {
+        document.getElementById('tab-' + t)?.classList.remove('active');
+        document.getElementById('page-' + t)?.classList.remove('active');
+      });
+
+      const activeTab = document.getElementById('tab-' + tab);
+      const activePage = document.getElementById('page-' + tab);
+
+      if (activeTab) {
+        activeTab.classList.add('active');
+        activeTab.classList.add('bounce');
+        setTimeout(() => activeTab.classList.remove('bounce'), 200);
+      }
+      if (activePage) activePage.classList.add('active');
+    }
+  </script>
+</body>
+</html>

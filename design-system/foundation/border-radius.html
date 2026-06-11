@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Border Radius — 잘자락 DS</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.56px; }
+    .page-header p { font-size: 14px; color: var(--color-text-tertiary); margin-top: 6px; letter-spacing: -0.28px; }
+
+    .section { margin-bottom: 40px; }
+    .section-title {
+      font-size: 16px; font-weight: 600; color: var(--color-text-secondary);
+      letter-spacing: -0.32px; margin-bottom: 20px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+
+    .radius-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .radius-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .radius-box {
+      width: 80px;
+      height: 80px;
+      background: var(--color-bg-tertiary);
+      border: 1px solid var(--color-border-default);
+    }
+
+    .radius-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .radius-token { font-size: 10px; color: var(--color-text-brand); letter-spacing: -0.2px; text-align: center; }
+    .radius-val { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
+
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .comp-item {
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .comp-demo {
+      height: 48px;
+      background: var(--color-bg-tertiary);
+      border: 1px solid var(--color-border-default);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .comp-label { font-size: 11px; color: var(--color-text-tertiary); letter-spacing: -0.22px; }
+    .comp-val { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
+    .comp-token { font-size: 10px; color: var(--color-text-brand); letter-spacing: -0.2px; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Border Radius</h1>
+    <p>잘자락 디자인 시스템의 레디우스 스케일 — 둥근 모서리로 부드러운 인터페이스 구현</p>
+  </div>
+
+  <!-- Base Scale -->
+  <div class="section">
+    <div class="section-title">Base Scale</div>
+    <div class="radius-grid">
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:2px;"></div>
+        <div class="radius-info">
+          <div class="radius-token">--radius-2</div>
+          <div class="radius-val">2px</div>
+        </div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:4px;"></div>
+        <div class="radius-info">
+          <div class="radius-token">--radius-4</div>
+          <div class="radius-val">4px</div>
+        </div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:8px;"></div>
+        <div class="radius-info">
+          <div class="radius-token">--radius-8</div>
+          <div class="radius-val">8px</div>
+        </div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:12px;"></div>
+        <div class="radius-info">
+          <div class="radius-token">--radius-12</div>
+          <div class="radius-val">12px</div>
+        </div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:16px;"></div>
+        <div class="radius-info">
+          <div class="radius-token">--radius-16</div>
+          <div class="radius-val">16px</div>
+        </div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:20px;"></div>
+        <div class="radius-info">
+          <div class="radius-token">--radius-20</div>
+          <div class="radius-val">20px</div>
+        </div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:24px;"></div>
+        <div class="radius-info">
+          <div class="radius-token">--radius-24</div>
+          <div class="radius-val">24px</div>
+        </div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:32px;"></div>
+        <div class="radius-info">
+          <div class="radius-token">--radius-32</div>
+          <div class="radius-val">32px</div>
+        </div>
+      </div>
+      <div class="radius-item">
+        <div class="radius-box" style="border-radius:9999px;"></div>
+        <div class="radius-info">
+          <div class="radius-token">--radius-full</div>
+          <div class="radius-val">9999px</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Component Radius -->
+  <div class="section">
+    <div class="section-title">Component Radius</div>
+    <div class="comp-grid">
+      <div class="comp-item">
+        <div class="comp-demo" style="border-radius:12px;">
+          <span style="font-size:12px; color:var(--color-text-tertiary);">Button SM/MD</span>
+        </div>
+        <div>
+          <div class="comp-label">Button SM / MD</div>
+          <div class="comp-val">12px</div>
+          <div class="comp-token">--button-radius-sm / --button-radius-md</div>
+        </div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-demo" style="border-radius:16px;">
+          <span style="font-size:12px; color:var(--color-text-tertiary);">Button LG</span>
+        </div>
+        <div>
+          <div class="comp-label">Button LG</div>
+          <div class="comp-val">16px</div>
+          <div class="comp-token">--button-radius-lg</div>
+        </div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-demo" style="border-radius:9999px;">
+          <span style="font-size:12px; color:var(--color-text-tertiary);">Button Full</span>
+        </div>
+        <div>
+          <div class="comp-label">Button Full / Badge</div>
+          <div class="comp-val">9999px</div>
+          <div class="comp-token">--button-radius-full / --badge-radius</div>
+        </div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-demo" style="border-radius:12px;">
+          <span style="font-size:12px; color:var(--color-text-tertiary);">Input Field</span>
+        </div>
+        <div>
+          <div class="comp-label">Input Field</div>
+          <div class="comp-val">12px</div>
+          <div class="comp-token">--input-radius</div>
+        </div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-demo" style="border-radius:16px;">
+          <span style="font-size:12px; color:var(--color-text-tertiary);">Card</span>
+        </div>
+        <div>
+          <div class="comp-label">Card</div>
+          <div class="comp-val">16px</div>
+          <div class="comp-token">--card-radius</div>
+        </div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-demo" style="border-radius:24px 24px 0 0;">
+          <span style="font-size:12px; color:var(--color-text-tertiary);">Bottom Sheet</span>
+        </div>
+        <div>
+          <div class="comp-label">Bottom Sheet (상단)</div>
+          <div class="comp-val">24px</div>
+          <div class="comp-token">--bottom-sheet-radius</div>
+        </div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-demo" style="border-radius:9999px;">
+          <span style="font-size:12px; color:var(--color-text-tertiary);">Toggle / Progress</span>
+        </div>
+        <div>
+          <div class="comp-label">Toggle / Progress Bar</div>
+          <div class="comp-val">9999px</div>
+          <div class="comp-token">--toggle-radius / --progress-radius</div>
+        </div>
+      </div>
+      <div class="comp-item">
+        <div class="comp-demo" style="border-radius:0px;">
+          <span style="font-size:12px; color:var(--color-text-tertiary);">Navigation Bar</span>
+        </div>
+        <div>
+          <div class="comp-label">Navigation Bar</div>
+          <div class="comp-val">0px</div>
+          <div class="comp-token">--navbar-radius</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

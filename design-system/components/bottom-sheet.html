@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bottom Sheet — 잘자락 DS</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.56px; }
+    .page-header p { font-size: 14px; color: var(--color-text-tertiary); margin-top: 6px; letter-spacing: -0.28px; }
+
+    .section { margin-bottom: 44px; }
+    .section-title {
+      font-size: 16px; font-weight: 600; color: var(--color-text-secondary);
+      letter-spacing: -0.32px; margin-bottom: 6px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .section-desc { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 20px; letter-spacing: -0.24px; }
+
+    /* Preview button grid */
+    .btn-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    .trigger-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; height: 48px;
+      background: #1E1E2E;
+      border: 1px solid #2A2A3E;
+      border-radius: 12px;
+      font-family: var(--font-family-base);
+      font-size: 14px; font-weight: 500;
+      color: #F0EAF8; cursor: pointer;
+      transition: all 0.15s ease;
+      letter-spacing: -0.28px;
+    }
+    .trigger-btn:hover { background: #252535; border-color: #3D3D5C; }
+    .trigger-btn.primary {
+      background: #B48EF0; color: #0D0D14; border-color: transparent;
+      box-shadow: 0 0 8px rgba(180,142,240,0.3);
+    }
+    .trigger-btn.primary:hover { background: #C4A0F4; }
+
+    /* ===== OVERLAY ===== */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* ===== SHEET ===== */
+    .sheet {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 101;
+      transform: translateY(100%);
+      transition: transform 0.3s ease-out;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .sheet.visible {
+      transform: translateY(0);
+    }
+    .sheet.dismissing {
+      transition: transform 0.25s ease-in;
+      transform: translateY(100%);
+    }
+
+    /* Sheet container */
+    .sheet-inner {
+      background: #252535;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0px 8px 24px rgba(0,0,0,0.5);
+      padding: 24px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .sheet-inner.mission {
+      border-top: 1px solid #B48EF0;
+      box-shadow: 0px 0px 32px rgba(180,142,240,0.5), 0px 8px 24px rgba(0,0,0,0.5);
+    }
+    .sheet-inner.confirm {
+      border-top: 1px solid #2A2A3E;
+    }
+
+    /* Handle bar */
+    .handle-bar {
+      width: 36px; height: 4px;
+      background: #3D3D5C;
+      border-radius: 9999px;
+      margin: 0 auto 24px;
+      flex-shrink: 0;
+    }
+
+    /* Sheet header */
+    .sheet-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+    .sheet-title { font-size: 20px; font-weight: 600; color: #F0EAF8; letter-spacing: -0.40px; }
+    .sheet-subtitle { font-size: 14px; color: #C4B8D8; letter-spacing: -0.28px; line-height: 1.5; margin-bottom: 20px; }
+    .sheet-close {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: none; color: #8A7FA0;
+      cursor: pointer; font-size: 20px; flex-shrink: 0;
+    }
+    .sheet-close:hover { color: #F0EAF8; }
+
+    /* Sheet body */
+    .sheet-body { flex: 1; margin-bottom: 24px; }
+
+    /* Sheet footer */
+    .sheet-footer { display: flex; flex-direction: column; gap: 12px; }
+    .btn-primary-full {
+      width: 100%; height: 56px;
+      background: #B48EF0; color: #0D0D14;
+      border: none; border-radius: 16px;
+      font-family: var(--font-family-base);
+      font-size: 16px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 0 8px rgba(180,142,240,0.3);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.15s;
+      letter-spacing: -0.32px;
+    }
+    .btn-primary-full:hover { background: #C4A0F4; }
+    .btn-secondary-full {
+      width: 100%; height: 48px;
+      background: #1E1E2E; color: #F0EAF8;
+      border: 1px solid #2A2A3E; border-radius: 12px;
+      font-family: var(--font-family-base);
+      font-size: 16px; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.15s;
+      letter-spacing: -0.32px;
+    }
+    .btn-secondary-full:hover { background: #252535; }
+    .btn-ghost-full {
+      width: 100%; height: 44px;
+      background: transparent; color: #B48EF0;
+      border: none; border-radius: 12px;
+      font-family: var(--font-family-base);
+      font-size: 15px; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.15s;
+      letter-spacing: -0.30px;
+    }
+    .btn-ghost-full:hover { background: rgba(180,142,240,0.1); }
+
+    /* Mission content */
+    .mission-icon {
+      width: 64px; height: 64px;
+      background: rgba(180,142,240,0.12);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    /* App select list */
+    .app-list { display: flex; flex-direction: column; gap: 4px; max-height: 280px; overflow-y: auto; }
+    .app-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px;
+      background: #1E1E2E; border: 1px solid #2A2A3E; border-radius: 12px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .app-item:hover { background: #252535; }
+    .app-item-icon {
+      width: 36px; height: 36px;
+      background: #252535; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .app-item-name { font-size: 15px; font-weight: 500; color: #F0EAF8; flex: 1; letter-spacing: -0.30px; }
+    .checkbox-sm {
+      width: 22px; height: 22px;
+      border: 1px solid #2A2A3E; border-radius: 4px;
+      background: #1E1E2E; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .checkbox-sm.checked {
+      background: #B48EF0; border-color: #B48EF0;
+    }
+
+    /* Static preview */
+    .preview-phone {
+      width: 320px;
+      height: 560px;
+      background: #0D0D14;
+      border-radius: 32px;
+      border: 1px solid #2A2A3E;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .preview-phone-bg {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .preview-sheet-static {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      border-radius: 24px 24px 0 0;
+      padding: 20px 16px 32px;
+    }
+
+    .variant-label {
+      font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 8px; letter-spacing: -0.22px;
+    }
+
+    .static-preview-grid {
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .static-preview-item { display: flex; flex-direction: column; gap: 8px; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Bottom Sheet</h1>
+    <p>Default / Mission / Confirm / App Select — 등장·사라짐 애니메이션 + 오버레이 닫기</p>
+  </div>
+
+  <!-- Trigger buttons -->
+  <div class="section">
+    <div class="section-title">Variant — 클릭해서 열기</div>
+    <div class="section-desc">버튼 클릭 시 실제 동작하는 Bottom Sheet — 오버레이 또는 닫기 버튼으로 닫기</div>
+    <div class="btn-grid">
+      <button class="trigger-btn primary" onclick="openSheet('default')">
+        <i class="ph ph-moon"></i> Default Sheet
+      </button>
+      <button class="trigger-btn primary" onclick="openSheet('mission')">
+        <i class="ph ph-puzzle-piece"></i> Mission Sheet
+      </button>
+      <button class="trigger-btn primary" onclick="openSheet('confirm')">
+        <i class="ph ph-warning"></i> Confirm Sheet
+      </button>
+      <button class="trigger-btn primary" onclick="openSheet('appselect')">
+        <i class="ph ph-squares-four"></i> App Select Sheet
+      </button>
+    </div>
+  </div>
+
+  <!-- Static previews -->
+  <div class="section">
+    <div class="section-title">Static Preview</div>
+    <div class="section-desc">각 Variant 시각적 미리보기</div>
+
+    <div class="static-preview-grid">
+      <!-- Default -->
+      <div class="static-preview-item">
+        <div class="variant-label">Default (Medium 50%)</div>
+        <div class="preview-phone">
+          <div class="preview-phone-bg">
+            <div style="font-size:13px; color:#4A4460; letter-spacing:-0.26px;">배경 화면</div>
+          </div>
+          <div style="position:absolute; inset:0; background:rgba(0,0,0,0.6);"></div>
+          <div class="preview-sheet-static" style="background:#252535; border-top:1px solid #2A2A3E;">
+            <div style="width:28px; height:3px; background:#3D3D5C; border-radius:9999px; margin:0 auto 16px;"></div>
+            <div style="font-size:16px; font-weight:600; color:#F0EAF8; letter-spacing:-0.32px; margin-bottom:6px;">취침 시간 변경</div>
+            <div style="font-size:12px; color:#C4B8D8; letter-spacing:-0.24px; margin-bottom:16px;">매일 밤 취침 목표 시간을 설정하세요</div>
+            <div style="height:40px; background:#1E1E2E; border:1px solid #2A2A3E; border-radius:10px; margin-bottom:12px;"></div>
+            <div style="height:36px; background:#B48EF0; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:#0D0D14;">설정 완료</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mission -->
+      <div class="static-preview-item">
+        <div class="variant-label">Mission (Large 75%)</div>
+        <div class="preview-phone">
+          <div class="preview-phone-bg">
+            <div style="font-size:13px; color:#4A4460; letter-spacing:-0.26px;">배경 화면</div>
+          </div>
+          <div style="position:absolute; inset:0; background:rgba(0,0,0,0.6);"></div>
+          <div class="preview-sheet-static" style="background:#252535; border-top:1px solid #B48EF0; box-shadow:0 0 24px rgba(180,142,240,0.4); height:75%;">
+            <div style="width:28px; height:3px; background:#3D3D5C; border-radius:9999px; margin:0 auto 16px;"></div>
+            <div style="width:40px; height:40px; background:rgba(180,142,240,0.15); border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:10px;">
+              <i class="ph ph-puzzle-piece" style="font-size:20px; color:#B48EF0;"></i>
+            </div>
+            <div style="font-size:16px; font-weight:600; color:#F0EAF8; letter-spacing:-0.32px; margin-bottom:4px;">미션 등장!</div>
+            <div style="font-size:11px; color:#C4B8D8; letter-spacing:-0.22px; margin-bottom:16px;">지금 미션을 완료하면 포인트를 획득할 수 있어요</div>
+            <div style="height:32px; background:#1E1E2E; border-radius:8px; margin-bottom:6px;"></div>
+            <div style="height:32px; background:#1E1E2E; border-radius:8px; margin-bottom:12px;"></div>
+            <div style="height:36px; background:#B48EF0; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:#0D0D14; gap:6px;">
+              <i class="ph ph-star"></i> 미션 수행하기
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm -->
+      <div class="static-preview-item">
+        <div class="variant-label">Confirm (Small 30%)</div>
+        <div class="preview-phone">
+          <div class="preview-phone-bg">
+            <div style="font-size:13px; color:#4A4460; letter-spacing:-0.26px;">배경 화면</div>
+          </div>
+          <div style="position:absolute; inset:0; background:rgba(0,0,0,0.6);"></div>
+          <div class="preview-sheet-static" style="background:#252535; border-top:1px solid #2A2A3E;">
+            <div style="width:28px; height:3px; background:#3D3D5C; border-radius:9999px; margin:0 auto 14px;"></div>
+            <div style="font-size:15px; font-weight:600; color:#F0EAF8; letter-spacing:-0.30px; margin-bottom:4px;">취침 모드 해제</div>
+            <div style="font-size:11px; color:#C4B8D8; letter-spacing:-0.22px; margin-bottom:14px;">정말 해제하시겠어요? 오늘 포인트가 취소됩니다.</div>
+            <div style="display:flex; gap:8px;">
+              <div style="flex:1; height:36px; background:#1E1E2E; border:1px solid #2A2A3E; border-radius:10px;"></div>
+              <div style="flex:1; height:36px; background:#E87A7A; border-radius:10px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay + Sheets -->
+  <div class="overlay" id="overlay" onclick="closeSheet()"></div>
+
+  <!-- Default Sheet -->
+  <div class="sheet" id="sheet-default">
+    <div class="sheet-inner">
+      <div class="handle-bar"></div>
+      <div class="sheet-header">
+        <div class="sheet-title">취침 시간 변경</div>
+        <button class="sheet-close" onclick="closeSheet()"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="sheet-subtitle">매일 밤 취침 목표 시간을 설정하세요. 목표 시간에 알람이 발송됩니다.</div>
+      <div class="sheet-body">
+        <div style="display:flex; gap:12px; justify-content:center; align-items:center; padding:24px 0;">
+          <div style="text-align:center;">
+            <div style="font-size:12px; color:#8A7FA0; margin-bottom:8px; letter-spacing:-0.24px;">시</div>
+            <div style="background:#1E1E2E; border:1px solid #2A2A3E; border-radius:12px; padding:16px 24px; font-size:32px; font-weight:700; color:#F0EAF8; letter-spacing:-0.64px;">23</div>
+          </div>
+          <div style="font-size:32px; font-weight:700; color:#8A7FA0; padding-top:20px;">:</div>
+          <div style="text-align:center;">
+            <div style="font-size:12px; color:#8A7FA0; margin-bottom:8px; letter-spacing:-0.24px;">분</div>
+            <div style="background:#1E1E2E; border:1px solid #2A2A3E; border-radius:12px; padding:16px 24px; font-size:32px; font-weight:700; color:#F0EAF8; letter-spacing:-0.64px;">00</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+          <button style="padding:6px 16px; background:#1E1E2E; border:1px solid #2A2A3E; border-radius:9999px; color:#C4B8D8; font-size:13px; cursor:pointer; font-family:var(--font-family-base); letter-spacing:-0.26px;" onclick="selectTime(this, '22:00')">22:00</button>
+          <button style="padding:6px 16px; background:#B48EF0; border:none; border-radius:9999px; color:#0D0D14; font-size:13px; cursor:pointer; font-family:var(--font-family-base); font-weight:600; letter-spacing:-0.26px;" onclick="selectTime(this, '23:00')">23:00</button>
+          <button style="padding:6px 16px; background:#1E1E2E; border:1px solid #2A2A3E; border-radius:9999px; color:#C4B8D8; font-size:13px; cursor:pointer; font-family:var(--font-family-base); letter-spacing:-0.26px;" onclick="selectTime(this, '00:00')">00:00</button>
+        </div>
+      </div>
+      <div class="sheet-footer">
+        <button class="btn-primary-full" onclick="closeSheet()"><i class="ph ph-moon"></i> 설정 완료</button>
+        <button class="btn-ghost-full" onclick="closeSheet()">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mission Sheet -->
+  <div class="sheet" id="sheet-mission">
+    <div class="sheet-inner mission">
+      <div class="handle-bar"></div>
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="sheet-close" onclick="closeSheet()"><i class="ph ph-x"></i></button>
+      </div>
+      <div style="text-align:center; padding: 0 0 20px;">
+        <div style="display:flex; justify-content:center; margin-bottom:16px;">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="filter:drop-shadow(0 0 12px rgba(180,142,240,0.5))">
+            <ellipse cx="32" cy="48" rx="5" ry="11" fill="#7EC8A4"/>
+            <ellipse cx="32" cy="28" rx="8" ry="14" fill="#B48EF0" opacity="0.95"/>
+            <ellipse cx="18" cy="22" rx="6" ry="11" fill="#C4A0F4" opacity="0.8" transform="rotate(-22 18 22)"/>
+            <ellipse cx="46" cy="22" rx="6" ry="11" fill="#C4A0F4" opacity="0.8" transform="rotate(22 46 22)"/>
+            <ellipse cx="11" cy="30" rx="4.5" ry="8" fill="#D4B8F8" opacity="0.55" transform="rotate(-38 11 30)"/>
+            <ellipse cx="53" cy="30" rx="4.5" ry="8" fill="#D4B8F8" opacity="0.55" transform="rotate(38 53 30)"/>
+          </svg>
+        </div>
+        <div style="font-size:22px; font-weight:700; color:#F0EAF8; letter-spacing:-0.44px; margin-bottom:8px;">미션 등장!</div>
+        <div style="font-size:14px; color:#C4B8D8; letter-spacing:-0.28px; line-height:1.6;">Instagram 잠금 미션이 시작됩니다.<br>지금 미션을 수행하면 <span style="color:#B48EF0; font-weight:600;">+200P</span>를 획득할 수 있어요!</div>
+      </div>
+      <div class="sheet-body">
+        <div style="background:#1E1E2E; border:1px solid #2A2A3E; border-radius:14px; padding:16px; display:flex; align-items:center; gap:12px;">
+          <div style="width:44px; height:44px; background:#252535; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <i class="ph ph-instagram-logo" style="font-size:22px; color:#B48EF0;"></i>
+          </div>
+          <div>
+            <div style="font-size:15px; font-weight:500; color:#F0EAF8; letter-spacing:-0.30px;">Instagram</div>
+            <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">취침 2시간 전 잠금 미션</div>
+          </div>
+          <span style="margin-left:auto; padding:4px 10px; background:rgba(180,142,240,0.15); border:1px solid rgba(180,142,240,0.3); border-radius:9999px; font-size:11px; font-weight:600; color:#C4A0F4;">+200P</span>
+        </div>
+      </div>
+      <div class="sheet-footer">
+        <button class="btn-primary-full" onclick="closeSheet()"><i class="ph ph-star"></i> 미션 수행하기</button>
+        <button class="btn-ghost-full" onclick="closeSheet()">나중에 하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Sheet -->
+  <div class="sheet" id="sheet-confirm">
+    <div class="sheet-inner confirm">
+      <div class="handle-bar"></div>
+      <div class="sheet-header">
+        <div class="sheet-title">취침 모드 해제</div>
+      </div>
+      <div class="sheet-subtitle">정말 해제하시겠어요? 오늘 획득한 포인트가 모두 사라지고, 연속 달성 기록이 초기화됩니다.</div>
+      <div class="sheet-body">
+        <div style="background:#3D1A1A; border:1px solid rgba(232,122,122,0.2); border-radius:12px; padding:14px 16px; display:flex; align-items:center; gap:10px;">
+          <i class="ph ph-warning" style="font-size:20px; color:#E87A7A; flex-shrink:0;"></i>
+          <div style="font-size:13px; color:#E87A7A; letter-spacing:-0.26px; line-height:1.5;">연속 12일 달성 기록이 사라집니다</div>
+        </div>
+      </div>
+      <div class="sheet-footer">
+        <button class="btn-primary-full" style="background:#E87A7A; box-shadow:none;" onclick="closeSheet()"><i class="ph ph-lock-open"></i> 해제하기</button>
+        <button class="btn-secondary-full" onclick="closeSheet()">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Select Sheet -->
+  <div class="sheet" id="sheet-appselect">
+    <div class="sheet-inner">
+      <div class="handle-bar"></div>
+      <div class="sheet-header">
+        <div class="sheet-title">차단 앱 선택</div>
+        <button class="sheet-close" onclick="closeSheet()"><i class="ph ph-x"></i></button>
+      </div>
+      <div class="sheet-subtitle">취침 시간에 차단할 앱을 선택하세요</div>
+      <div class="sheet-body">
+        <div class="app-list">
+          <div class="app-item" onclick="toggleApp(this)">
+            <div class="app-item-icon"><i class="ph ph-instagram-logo" style="font-size:20px; color:#B48EF0;"></i></div>
+            <span class="app-item-name">Instagram</span>
+            <div class="checkbox-sm checked"><i class="ph ph-check" style="font-size:13px; color:#0D0D14;"></i></div>
+          </div>
+          <div class="app-item" onclick="toggleApp(this)">
+            <div class="app-item-icon"><i class="ph ph-youtube-logo" style="font-size:20px; color:#E87A7A;"></i></div>
+            <span class="app-item-name">YouTube</span>
+            <div class="checkbox-sm checked"><i class="ph ph-check" style="font-size:13px; color:#0D0D14;"></i></div>
+          </div>
+          <div class="app-item" onclick="toggleApp(this)">
+            <div class="app-item-icon"><i class="ph ph-tiktok-logo" style="font-size:20px; color:#F0EAF8;"></i></div>
+            <span class="app-item-name">TikTok</span>
+            <div class="checkbox-sm"><i class="ph ph-check" style="font-size:13px; color:#0D0D14; display:none;"></i></div>
+          </div>
+          <div class="app-item" onclick="toggleApp(this)">
+            <div class="app-item-icon"><i class="ph ph-twitter-logo" style="font-size:20px; color:#7AB8E8;"></i></div>
+            <span class="app-item-name">Twitter / X</span>
+            <div class="checkbox-sm"><i class="ph ph-check" style="font-size:13px; color:#0D0D14; display:none;"></i></div>
+          </div>
+          <div class="app-item" onclick="toggleApp(this)">
+            <div class="app-item-icon"><i class="ph ph-game-controller" style="font-size:20px; color:#F0C87A;"></i></div>
+            <span class="app-item-name">게임</span>
+            <div class="checkbox-sm"><i class="ph ph-check" style="font-size:13px; color:#0D0D14; display:none;"></i></div>
+          </div>
+        </div>
+      </div>
+      <div class="sheet-footer">
+        <button class="btn-primary-full" onclick="closeSheet()"><i class="ph ph-lock"></i> 2개 앱 차단 설정</button>
+        <button class="btn-ghost-full" onclick="closeSheet()">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSheet = null;
+
+    function openSheet(type) {
+      const overlay = document.getElementById('overlay');
+      const sheet = document.getElementById('sheet-' + type);
+      if (!sheet) return;
+
+      overlay.classList.add('visible');
+      void sheet.offsetWidth;
+      sheet.classList.add('visible');
+      currentSheet = sheet;
+    }
+
+    function closeSheet() {
+      if (!currentSheet) return;
+      const overlay = document.getElementById('overlay');
+
+      currentSheet.classList.add('dismissing');
+      currentSheet.classList.remove('visible');
+      overlay.classList.remove('visible');
+
+      setTimeout(() => {
+        if (currentSheet) currentSheet.classList.remove('dismissing');
+        currentSheet = null;
+      }, 260);
+    }
+
+    function toggleApp(item) {
+      const box = item.querySelector('.checkbox-sm');
+      const check = box.querySelector('i');
+      if (box.classList.contains('checked')) {
+        box.classList.remove('checked');
+        check.style.display = 'none';
+      } else {
+        box.classList.add('checked');
+        check.style.display = '';
+      }
+    }
+
+    function selectTime(btn, time) {
+      document.querySelectorAll('#sheet-default .sheet-body button').forEach(b => {
+        b.style.background = '#1E1E2E';
+        b.style.border = '1px solid #2A2A3E';
+        b.style.color = '#C4B8D8';
+        b.style.fontWeight = '400';
+      });
+      btn.style.background = '#B48EF0';
+      btn.style.border = 'none';
+      btn.style.color = '#0D0D14';
+      btn.style.fontWeight = '600';
+    }
+  </script>
+</body>
+</html>

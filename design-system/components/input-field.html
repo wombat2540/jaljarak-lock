@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Field — 잘자락 DS</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.56px; }
+    .page-header p { font-size: 14px; color: var(--color-text-tertiary); margin-top: 6px; letter-spacing: -0.28px; }
+
+    .section { margin-bottom: 44px; }
+    .section-title {
+      font-size: 16px; font-weight: 600; color: var(--color-text-secondary);
+      letter-spacing: -0.32px; margin-bottom: 6px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .section-desc { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 20px; letter-spacing: -0.24px; }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .input-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .input-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #C4B8D8;
+      letter-spacing: -0.28px;
+    }
+    .input-helper {
+      font-size: 12px;
+      color: #8A7FA0;
+      letter-spacing: -0.24px;
+    }
+    .input-error-msg {
+      font-size: 12px;
+      color: #E87A7A;
+      letter-spacing: -0.24px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Base Input Container */
+    .input-container {
+      display: flex;
+      align-items: center;
+      background: #1E1E2E;
+      border: 1px solid #2A2A3E;
+      border-radius: 12px;
+      transition: all 0.15s ease;
+      overflow: hidden;
+    }
+    .input-container.size-md { height: 48px; }
+    .input-container.size-lg { height: 56px; }
+    .input-container.state-focus { border-color: #B48EF0; box-shadow: inset 0px 0px 8px rgba(180,142,240,0.2); }
+    .input-container.state-error { border-color: #E87A7A; }
+    .input-container.state-disabled { background: #16161F; border-color: #1E1E2E; }
+    .input-container.state-readonly { background: #16161F; border-color: #1E1E2E; }
+
+    .input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-family-base);
+      font-size: 16px;
+      color: #F0EAF8;
+      letter-spacing: -0.32px;
+      padding: 0 16px;
+      height: 100%;
+    }
+    .input-field::placeholder { color: #8A7FA0; }
+    .input-field:disabled { color: #4A4460; cursor: not-allowed; }
+    .input-field[readonly] { color: #8A7FA0; cursor: default; }
+
+    .input-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      color: #8A7FA0;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-size: 20px;
+    }
+    .input-icon:hover { color: #C4B8D8; }
+    .input-icon.left { padding-left: 4px; }
+    .input-icon.right { padding-right: 4px; }
+
+    .state-demo-label {
+      font-size: 11px;
+      color: var(--color-text-tertiary);
+      margin-bottom: 8px;
+      letter-spacing: -0.22px;
+    }
+
+    .input-number-wrap {
+      display: flex;
+      align-items: center;
+    }
+    .num-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: #8A7FA0;
+      cursor: pointer;
+      font-size: 20px;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .num-btn:hover { color: #B48EF0; }
+    .num-input { text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Input Field</h1>
+    <p>Default / Password / Search / Number — MD 48px, LG 56px</p>
+  </div>
+
+  <!-- Variant -->
+  <div class="section">
+    <div class="section-title">Variant</div>
+    <div class="section-desc">4가지 입력 필드 유형</div>
+    <div class="input-grid">
+
+      <!-- Default -->
+      <div class="input-wrap">
+        <div class="state-demo-label">Default</div>
+        <div class="input-label">이름</div>
+        <div class="input-container size-md">
+          <input class="input-field" type="text" placeholder="이름을 입력하세요">
+        </div>
+        <div class="input-helper">실명을 입력해 주세요</div>
+      </div>
+
+      <!-- Password -->
+      <div class="input-wrap">
+        <div class="state-demo-label">Password</div>
+        <div class="input-label">비밀번호</div>
+        <div class="input-container size-md" id="pw-container">
+          <input class="input-field" type="password" id="pw-input" placeholder="비밀번호를 입력하세요">
+          <button class="input-icon right" onclick="togglePw()" style="background:none; border:none;">
+            <i class="ph ph-eye" id="pw-eye"></i>
+          </button>
+        </div>
+        <div class="input-helper">8자 이상 입력해 주세요</div>
+      </div>
+
+      <!-- Search -->
+      <div class="input-wrap">
+        <div class="state-demo-label">Search</div>
+        <div class="input-label">앱 검색</div>
+        <div class="input-container size-md">
+          <div class="input-icon left"><i class="ph ph-magnifying-glass"></i></div>
+          <input class="input-field" type="search" placeholder="차단할 앱을 검색하세요">
+          <button class="input-icon right" style="background:none; border:none;"><i class="ph ph-x"></i></button>
+        </div>
+      </div>
+
+      <!-- Number -->
+      <div class="input-wrap">
+        <div class="state-demo-label">Number</div>
+        <div class="input-label">취침 시간 (시)</div>
+        <div class="input-container size-md">
+          <div class="input-number-wrap" style="width:100%;">
+            <button class="num-btn" onclick="changeNum(-1)"><i class="ph ph-minus"></i></button>
+            <input class="input-field num-input" type="number" id="num-input" value="23" min="0" max="23">
+            <button class="num-btn" onclick="changeNum(1)"><i class="ph ph-plus"></i></button>
+          </div>
+        </div>
+        <div class="input-helper">0 ~ 23 사이의 값</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Size -->
+  <div class="section">
+    <div class="section-title">Size</div>
+    <div class="section-desc">MD 48px / LG 56px</div>
+    <div class="input-grid">
+      <div class="input-wrap">
+        <div class="state-demo-label">MD (48px)</div>
+        <div class="input-container size-md">
+          <input class="input-field" type="text" placeholder="MD 사이즈 입력 필드">
+        </div>
+      </div>
+      <div class="input-wrap">
+        <div class="state-demo-label">LG (56px)</div>
+        <div class="input-container size-lg">
+          <input class="input-field" type="text" style="font-size:16px;" placeholder="LG 사이즈 입력 필드">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- State -->
+  <div class="section">
+    <div class="section-title">State</div>
+    <div class="section-desc">Default / Focus / Filled / Error / Disabled / Read Only</div>
+    <div class="input-grid">
+
+      <div class="input-wrap">
+        <div class="state-demo-label">Default</div>
+        <div class="input-container size-md">
+          <input class="input-field" type="text" placeholder="플레이스홀더">
+        </div>
+      </div>
+
+      <div class="input-wrap">
+        <div class="state-demo-label">Focus</div>
+        <div class="input-container size-md state-focus">
+          <input class="input-field" type="text" placeholder="포커스 상태">
+        </div>
+      </div>
+
+      <div class="input-wrap">
+        <div class="state-demo-label">Filled</div>
+        <div class="input-container size-md">
+          <input class="input-field" type="text" value="입력된 값">
+        </div>
+      </div>
+
+      <div class="input-wrap">
+        <div class="state-demo-label">Error</div>
+        <div class="input-container size-md state-error">
+          <input class="input-field" type="text" value="잘못된 형식">
+          <div class="input-icon right" style="color:#E87A7A;"><i class="ph ph-warning-circle"></i></div>
+        </div>
+        <div class="input-error-msg"><i class="ph ph-warning-circle"></i> 올바른 형식으로 입력해 주세요</div>
+      </div>
+
+      <div class="input-wrap">
+        <div class="state-demo-label">Disabled</div>
+        <div class="input-container size-md state-disabled">
+          <input class="input-field" type="text" placeholder="비활성 상태" disabled>
+        </div>
+      </div>
+
+      <div class="input-wrap">
+        <div class="state-demo-label">Read Only</div>
+        <div class="input-container size-md state-readonly">
+          <input class="input-field" type="text" value="읽기 전용 값" readonly>
+          <div class="input-icon right"><i class="ph ph-lock"></i></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sub Elements -->
+  <div class="section">
+    <div class="section-title">Sub Elements</div>
+    <div class="section-desc">Label / Helper Text / Error Message</div>
+    <div style="max-width: 360px; display: flex; flex-direction: column; gap: 24px;">
+
+      <div class="input-wrap">
+        <div class="input-label">취침 목표 시간</div>
+        <div class="input-container size-md">
+          <input class="input-field" type="text" placeholder="예: 23:00">
+        </div>
+        <div class="input-helper">매일 같은 시간에 취침하는 것이 좋아요</div>
+      </div>
+
+      <div class="input-wrap">
+        <div class="input-label">이메일 주소</div>
+        <div class="input-container size-md state-error">
+          <input class="input-field" type="email" value="invalid@">
+          <div class="input-icon right" style="color:#E87A7A;"><i class="ph ph-warning-circle"></i></div>
+        </div>
+        <div class="input-error-msg"><i class="ph ph-warning-circle"></i> 올바른 이메일 형식이 아닙니다</div>
+      </div>
+
+      <div class="input-wrap">
+        <div class="input-label">알람 메모 <span style="font-size:12px; color:var(--color-text-tertiary); font-weight:400;">(선택)</span></div>
+        <div class="input-container size-md">
+          <input class="input-field" type="text" placeholder="알람에 표시할 메시지">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function togglePw() {
+      const input = document.getElementById('pw-input');
+      const eye = document.getElementById('pw-eye');
+      if (input.type === 'password') {
+        input.type = 'text';
+        eye.className = 'ph ph-eye-slash';
+      } else {
+        input.type = 'password';
+        eye.className = 'ph ph-eye';
+      }
+    }
+
+    function changeNum(delta) {
+      const input = document.getElementById('num-input');
+      let val = parseInt(input.value) + delta;
+      val = Math.max(0, Math.min(23, val));
+      input.value = val;
+    }
+
+    // Focus state demo
+    document.querySelectorAll('.input-field').forEach(inp => {
+      inp.addEventListener('focus', () => inp.closest('.input-container')?.classList.add('state-focus'));
+      inp.addEventListener('blur', () => {
+        const c = inp.closest('.input-container');
+        if (!c?.classList.contains('state-error')) c?.classList.remove('state-focus');
+      });
+    });
+  </script>
+</body>
+</html>

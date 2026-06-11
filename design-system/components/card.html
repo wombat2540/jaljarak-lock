@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card — 잘자락 DS</title>
+  <link rel="stylesheet" href="../tokens/tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.56px; }
+    .page-header p { font-size: 14px; color: var(--color-text-tertiary); margin-top: 6px; letter-spacing: -0.28px; }
+
+    .section { margin-bottom: 44px; }
+    .section-title {
+      font-size: 16px; font-weight: 600; color: var(--color-text-secondary);
+      letter-spacing: -0.32px; margin-bottom: 6px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .section-desc { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 20px; letter-spacing: -0.24px; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 480px;
+    }
+
+    /* Base Card */
+    .card {
+      border-radius: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Variant */
+    .card-default {
+      background: #16161F;
+      border: 1px solid #1E1E2E;
+      box-shadow: 0px 1px 4px rgba(0,0,0,0.3);
+    }
+    .card-highlight {
+      background: #16161F;
+      border: 1px solid #B48EF0;
+      box-shadow: 0px 0px 16px rgba(180,142,240,0.4);
+    }
+    .card-list {
+      background: #16161F;
+      border: 1px solid #1E1E2E;
+      border-radius: 16px;
+      padding: 16px 20px;
+      min-height: 44px;
+    }
+    .card-stat {
+      background: #16161F;
+      border: 1px solid #1E1E2E;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .card-reward {
+      background: #16161F;
+      border: 1px solid #B48EF0;
+      box-shadow: 0px 0px 8px rgba(180,142,240,0.3);
+    }
+
+    /* State */
+    .card-pressed {
+      background: #252535 !important;
+      opacity: 0.8;
+    }
+    .card-selected {
+      border: 1px solid #B48EF0 !important;
+      box-shadow: 0px 0px 8px rgba(180,142,240,0.3) !important;
+    }
+    .card-disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Internal structure */
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-header-left { display: flex; align-items: center; gap: 10px; }
+    .card-icon {
+      width: 40px; height: 40px;
+      background: rgba(180,142,240,0.12);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-title { font-size: 18px; font-weight: 600; color: #F0EAF8; letter-spacing: -0.36px; line-height: 1.5; }
+    .card-subtitle { font-size: 14px; font-weight: 400; color: #C4B8D8; letter-spacing: -0.28px; margin-top: 2px; }
+    .card-badge {
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(180,142,240,0.15);
+      color: #C4A0F4;
+      border: 1px solid rgba(180,142,240,0.3);
+      white-space: nowrap;
+    }
+    .card-body { flex: 1; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card-meta { font-size: 12px; color: #8A7FA0; letter-spacing: -0.24px; }
+
+    /* Progress mini */
+    .mini-progress { height: 6px; background: #1E1E2E; border-radius: 9999px; overflow: hidden; }
+    .mini-progress-fill { height: 100%; background: #B48EF0; border-radius: 9999px; box-shadow: 0 0 8px rgba(180,142,240,0.3); }
+
+    .stat-value { font-size: 28px; font-weight: 700; color: #F0EAF8; letter-spacing: -0.56px; }
+    .stat-unit { font-size: 14px; color: #8A7FA0; margin-left: 4px; }
+    .stat-change { font-size: 12px; color: #7EC8A4; display: flex; align-items: center; gap: 3px; }
+
+    /* Btn in card */
+    .card-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      height: 36px; padding: 0 16px;
+      background: #B48EF0; color: #0D0D14;
+      border: none; border-radius: 10px;
+      font-family: var(--font-family-base);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 0 8px rgba(180,142,240,0.3);
+      letter-spacing: -0.26px;
+    }
+
+    .state-label {
+      font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 10px; letter-spacing: -0.22px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>Card</h1>
+    <p>Default / Highlight / List / Stat / Reward — 4가지 State</p>
+  </div>
+
+  <!-- Variant -->
+  <div class="section">
+    <div class="section-title">Variant</div>
+    <div class="section-desc">5가지 카드 변형 — 각 내부 Header / Body / Footer 구조 포함</div>
+    <div class="card-grid">
+
+      <!-- Default -->
+      <div>
+        <div class="state-label">Default</div>
+        <div class="card card-default">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-icon"><i class="ph ph-moon" style="font-size:20px; color:#B48EF0;"></i></div>
+              <div>
+                <div class="card-title">취침 목표</div>
+                <div class="card-subtitle">오늘 밤 23:00 취침</div>
+              </div>
+            </div>
+            <div class="card-badge">진행중</div>
+          </div>
+          <div class="card-body">
+            <div style="font-size:13px; color:#8A7FA0; letter-spacing:-0.26px; line-height:1.5;">오늘 취침 목표까지 2시간 30분 남았어요. 지금 앱을 잠그면 포인트를 획득할 수 있어요.</div>
+            <div style="margin-top:12px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">오늘 달성률</span>
+                <span style="font-size:12px; font-weight:600; color:#B48EF0; letter-spacing:-0.24px;">65%</span>
+              </div>
+              <div class="mini-progress"><div class="mini-progress-fill" style="width:65%;"></div></div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">연속 7일 달성 중</div>
+            <button class="card-btn"><i class="ph ph-lock"></i> 시작</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Highlight -->
+      <div>
+        <div class="state-label">Highlight</div>
+        <div class="card card-highlight">
+          <div class="card-header">
+            <div class="card-header-left">
+              <div class="card-icon" style="background:rgba(180,142,240,0.2);"><i class="ph ph-star" style="font-size:20px; color:#B48EF0;"></i></div>
+              <div>
+                <div class="card-title">주간 달성 보상</div>
+                <div class="card-subtitle">이번 주 목표 달성!</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <ellipse cx="12" cy="18" rx="2" ry="4.5" fill="#7EC8A4"/>
+                <ellipse cx="12" cy="11" rx="3" ry="5" fill="#B48EF0" opacity="0.95"/>
+                <ellipse cx="7" cy="9" rx="2.2" ry="4" fill="#C4A0F4" opacity="0.8" transform="rotate(-22 7 9)"/>
+                <ellipse cx="17" cy="9" rx="2.2" ry="4" fill="#C4A0F4" opacity="0.8" transform="rotate(22 17 9)"/>
+              </svg>
+              <span style="font-size:24px; font-weight:700; color:#F0EAF8; letter-spacing:-0.48px;">500P</span>
+              <span style="font-size:13px; color:#C4B8D8; letter-spacing:-0.26px;">포인트 획득!</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">유효기간: 30일</div>
+            <button class="card-btn"><i class="ph ph-gift"></i> 수령하기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- List -->
+      <div>
+        <div class="state-label">List</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div class="card card-list" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; background:#1E1E2E; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+                <i class="ph ph-instagram-logo" style="font-size:18px; color:#B48EF0;"></i>
+              </div>
+              <div>
+                <div style="font-size:15px; font-weight:500; color:#F0EAF8; letter-spacing:-0.30px;">Instagram</div>
+                <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">소셜 미디어</div>
+              </div>
+            </div>
+            <i class="ph ph-caret-right" style="color:#8A7FA0; font-size:16px;"></i>
+          </div>
+          <div class="card card-list" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; background:#1E1E2E; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+                <i class="ph ph-youtube-logo" style="font-size:18px; color:#E87A7A;"></i>
+              </div>
+              <div>
+                <div style="font-size:15px; font-weight:500; color:#F0EAF8; letter-spacing:-0.30px;">YouTube</div>
+                <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px;">동영상</div>
+              </div>
+            </div>
+            <i class="ph ph-caret-right" style="color:#8A7FA0; font-size:16px;"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reward -->
+      <div>
+        <div class="state-label">Reward</div>
+        <div class="card card-reward">
+          <div class="card-header">
+            <div class="card-header-left">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="filter:drop-shadow(0 0 6px rgba(180,142,240,0.4))">
+                <ellipse cx="16" cy="24" rx="2.5" ry="6" fill="#7EC8A4"/>
+                <ellipse cx="16" cy="15" rx="4" ry="7" fill="#B48EF0" opacity="0.95"/>
+                <ellipse cx="9" cy="12" rx="3" ry="5.5" fill="#C4A0F4" opacity="0.8" transform="rotate(-22 9 12)"/>
+                <ellipse cx="23" cy="12" rx="3" ry="5.5" fill="#C4A0F4" opacity="0.8" transform="rotate(22 23 12)"/>
+              </svg>
+              <div>
+                <div class="card-title">보유 포인트</div>
+                <div class="card-subtitle">이번 달 획득 포인트</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="stat-value">2,340<span class="stat-unit">P</span></div>
+            <div class="stat-change" style="margin-top:4px;"><i class="ph ph-arrow-up"></i> 이번 달 +800P</div>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">보상 가능한 쿠폰 3개</div>
+            <button class="card-btn"><i class="ph ph-ticket"></i> 교환</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Stat Cards (2-column) -->
+  <div class="section">
+    <div class="section-title">Stat Variant (2열 그리드)</div>
+    <div class="card-grid-2">
+      <div class="card card-stat" style="gap:8px;">
+        <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px; display:flex; align-items:center; gap:4px;">
+          <i class="ph ph-moon" style="color:#B48EF0;"></i> 평균 취침
+        </div>
+        <div class="stat-value" style="font-size:24px;">23:15</div>
+        <div class="stat-change"><i class="ph ph-arrow-down"></i> 15분 개선</div>
+      </div>
+      <div class="card card-stat" style="gap:8px;">
+        <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px; display:flex; align-items:center; gap:4px;">
+          <i class="ph ph-chart-bar" style="color:#7EC8A4;"></i> 목표 달성률
+        </div>
+        <div class="stat-value" style="font-size:24px;">86<span class="stat-unit">%</span></div>
+        <div class="stat-change"><i class="ph ph-arrow-up"></i> 지난주 대비 +12%</div>
+      </div>
+      <div class="card card-stat" style="gap:8px;">
+        <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px; display:flex; align-items:center; gap:4px;">
+          <i class="ph ph-fire" style="color:#F0C87A;"></i> 연속 달성
+        </div>
+        <div class="stat-value" style="font-size:24px;">12<span class="stat-unit">일</span></div>
+        <div class="stat-change"><i class="ph ph-arrow-up"></i> 최고 기록 갱신!</div>
+      </div>
+      <div class="card card-stat" style="gap:8px;">
+        <div style="font-size:12px; color:#8A7FA0; letter-spacing:-0.24px; display:flex; align-items:center; gap:4px;">
+          <i class="ph ph-star" style="color:#B48EF0;"></i> 총 포인트
+        </div>
+        <div class="stat-value" style="font-size:24px;">2,340<span class="stat-unit" style="font-size:12px;">P</span></div>
+        <div class="stat-change"><i class="ph ph-arrow-up"></i> +500P 이번주</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- State -->
+  <div class="section">
+    <div class="section-title">State</div>
+    <div class="section-desc">Default / Pressed / Selected / Disabled</div>
+    <div class="card-grid">
+
+      <div>
+        <div class="state-label">Default</div>
+        <div class="card card-default">
+          <div class="card-title">취침 알람 설정</div>
+          <div class="card-subtitle">매일 밤 11시 취침 알람</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="state-label">Pressed</div>
+        <div class="card card-default card-pressed">
+          <div class="card-title">취침 알람 설정</div>
+          <div class="card-subtitle">매일 밤 11시 취침 알람</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="state-label">Selected</div>
+        <div class="card card-default card-selected">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div class="card-title">취침 알람 설정</div>
+              <div class="card-subtitle">매일 밤 11시 취침 알람</div>
+            </div>
+            <div style="width:22px; height:22px; border-radius:50%; background:#B48EF0; display:flex; align-items:center; justify-content:center;">
+              <i class="ph ph-check" style="font-size:13px; color:#0D0D14; font-weight:700;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="state-label">Disabled</div>
+        <div class="card card-default card-disabled">
+          <div class="card-title">취침 알람 설정</div>
+          <div class="card-subtitle">이 기능을 사용할 수 없습니다</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
